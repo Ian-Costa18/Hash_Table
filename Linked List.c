@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
 // Create node and header types
 typedef struct node_t {
-    int data;
+    void *data;
+    int order;
     int position;
     struct node_t *next_node_ptr;
 } node_t;
@@ -14,121 +14,10 @@ typedef struct header_t {
     int node_counter;
 } header_t;
 
-// Function headers
-void start_menu(header_t *head);
-node_t * add_node(header_t *head, int data);
-int delete_node(header_t *head, int data);
-int print_list(header_t head);
-node_t * search_list(header_t head, int data);
-
-/*
-int main(void) {
-
-    // Create the header for the linked list
-    header_t header;
-    // Set starting values for header
-    header.first_node_ptr = NULL;
-    header.node_counter = 0;
-
-    start_menu(&header);
-
-    // End the program - return success
-    return 0;
-}
-*/
-
-void start_menu(header_t *head) {
-
-    // Start the menu
-    int option;
-    printf("Welcome to the linked list!\n");
-    // Start menu loop, run once before checking conditional
-    do {
-        printf("--------------------------\n");
-        printf("What would you like to do?\n");
-        printf("0: Exit\n"
-               "1: Add a node\n"
-               "2: Delete a node\n"
-               "3: Print the list\n"
-               "4: Search the list for a node with given data\n"
-               "> ");
-        scanf(" %d", &option);
-        printf("--------------------------\n");
-
-        // Choose which function to use based on options
-        if (option == 1) {
-
-            // Ask for new nodes data
-            int add_data;
-            printf("What data is for this node?\n> ");
-            scanf(" %d", &add_data);
-
-            // Call the add node function
-            node_t *new_node = add_node(head, add_data);
-
-            printf("Node created at position #%d\n", new_node->position);
-        } else if (option == 2) {
-
-            // Loop until data is found, run at least once
-            char cont;
-            do {
-                // Find what node to delete
-                int delete_data;
-                printf("What piece of data should be deleted?\n> ");
-                scanf(" %d", &delete_data);
-                // Call the delete node function
-                int deleted_node = delete_node(head, delete_data);
-
-                // If node isn't found, ask to continue
-                if (deleted_node == -1) {
-                    printf("Node not found, try again? (y/n)\n> ");
-                    scanf(" %c", &cont);
-                    continue;
-                } else if (deleted_node == -2) {
-                    // If list is empty, alert user
-                    printf("List is empty, nothing deleted\n");
-                    continue;
-                }
-
-                // Tell the user what node was deleted
-                printf("Deleted node #%d\n", deleted_node);
-
-            } while (cont == 'y');
-
-        } else if (option == 3) {
-
-            // Call the print list function
-            print_list(*head);
-        } else if (option == 4) {
-
-            // Ask the user to input data to search for
-            int search_data;
-            printf("What data do you want to find?\n> ");
-            scanf(" %d", &search_data);
-
-            // Call the search_list function, assign the output to found_node
-            node_t *found_node = search_list(*head, search_data);
-
-            // Check if node was not found
-            if (found_node == NULL) {
-
-                printf("No node with that data found in the list\n");
-                continue;
-            }
-
-            // If a node was found, print it
-            printf("Node found at position #%d!\n", found_node->position);
-        } else {
-            // If input wasn't recognized, continue
-            // Stops the loop if input was 0
-            continue;
-        }
-
-    } while (option != 0);
-}
-
-node_t * add_node(header_t *head, int data) {
+// Define functions
+node_t * add_node(header_t *head, void *data, int order) {
     // Add's a node to the linked list in ascending order
+    //
 
     // Dereference head's first pointer to get first node
     node_t *current_node_ptr = head->first_node_ptr;
@@ -139,6 +28,7 @@ node_t * add_node(header_t *head, int data) {
 
     // Add data to the new node, set next node to nothing
     new_node_ptr->data = data;
+    new_node_ptr->order = order;
     new_node_ptr->next_node_ptr = NULL;
 
     // Check if there's no first node
@@ -155,7 +45,7 @@ node_t * add_node(header_t *head, int data) {
     }
 
     // If we're replacing the first node
-    if (new_node_ptr->data < current_node_ptr->data) {
+    if (new_node_ptr->order < current_node_ptr->order) {
         // Set node's position to 0
         new_node_ptr->position = 0;
         // Set new node's pointer to current node
@@ -179,7 +69,7 @@ node_t * add_node(header_t *head, int data) {
     for (counter = 0; current_node_ptr != NULL; counter++) {
 
         // If the new node's data is greater than the current node's data, replace it
-        if (new_node_ptr->data < current_node_ptr->data) {
+        if (new_node_ptr->order < current_node_ptr->order) {
 
             // Set new node's position to current position
             new_node_ptr->position = counter;
@@ -236,7 +126,7 @@ int delete_node(header_t *head, int data) {
 
 
     // Check if the first node is going to be deleted
-    if (data == current_node_ptr->data) {
+    if (data == current_node_ptr->order) {
 
         // Assign the previous node to first node
         previous_node_ptr = head->first_node_ptr;
@@ -262,7 +152,7 @@ int delete_node(header_t *head, int data) {
     for (int node_position = 0; current_node_ptr != NULL; node_position++) {
 
         // Check if current node should be deleted
-        if (data == current_node_ptr->data) {
+        if (data == current_node_ptr->order) {
 
             // Change the last node to point to the next node
             previous_node_ptr->next_node_ptr = current_node_ptr->next_node_ptr;
@@ -280,7 +170,7 @@ int delete_node(header_t *head, int data) {
             // Stop the function - return position of node in list
             return node_position;
 
-        } else if (data < current_node_ptr->data) {
+        } else if (data < current_node_ptr->order) {
             // List is ordered, if data is less than the current node's data
             // the data must not have been found
             break;
@@ -303,31 +193,8 @@ int delete_node(header_t *head, int data) {
     return -1;
 }
 
-int print_list(header_t head) {
-    // Prints the linked list starting from the head
-    // Returns 0 if successful
-
-    // Get the first node from head
-    node_t *node_ptr = head.first_node_ptr;
-
-    // Print the list, start node_counter at 1 and increase after every loop
-    // Only run while node is not NULL
-    for (int counter = 0; node_ptr != NULL; counter++) {
-
-        printf("Node #%d: %d\n", node_ptr->position, node_ptr->data);
-
-        node_ptr = node_ptr->next_node_ptr;
-    }
-
-    // When the loop ends, say it
-    printf("No more nodes\n");
-
-    // Stop the function - return success
-    return 0;
-}
-
 node_t * search_list(header_t head, int data) {
-    // Searches the list for a node based on its data
+    // Searches the list for a node based on its order
     // Returns pointer to the node, or NULL if node wasn't found
 
     // Get the first node from head
@@ -337,7 +204,7 @@ node_t * search_list(header_t head, int data) {
     for (int counter = 0; node_ptr != NULL; counter++) {
 
         // Check if node's data equals the data we're searching for
-        if (node_ptr->data == data) {
+        if (node_ptr->order == data) {
 
             // Stop the function - return the found node
             return node_ptr;
