@@ -3,65 +3,11 @@
 #include <string.h>
 #include "Linked List.c"
 
-/*
- * Criteria:
- *  Array of linked lists > Hash Table (HT)
- *  Node (struct) - char[] name, int age
- *  Hash value computation
- *  Create a file of names
- *  Read from file and create starting hash table
- */
-
-/*6
- * Paper and pencil analysis: Hash value
- *  HV = SUM(
- *      for i in len(name):
- *          mod(asciitoint(name[i]), table_size)
- *  )
- *
- *  char name[25];
- *  scanf("%s", name);
- *
- *  T: name[0] - 84
- *  O: name[1] - 111
- *  M: name[2] - 109
- *
- *  for (int i = 0; i < len(name); i++) {
- *      sum += name[i];
- *  }
- *
- *  HV = sum % table_size;
- *
- *  i | sum | array[i] (data) | HV
- *  0 | 84  | 84              | /
- *  1 | 195 | 111             | /
- *  2 | 304 | 109             | /
- *  3 | /   | /               | 304 % 5 = 4
- *
- *  Hash Table
- *  |---------------------------------------|
- *  | 0: H1 | 1: H2 | 2: H3 | 3: H4 | 4: H5 |
- *  |---------------------------------------|
- *
- *  H1 = 0 | NULL
- *  H2 = 0 | NULL
- *  H3 = 0 | NULL
- *  H4 = 1 | ->"Tom" | 54 | NULL
- *  H5 = 0 | NULL
- *
- *  Jane
- *  Mike
- *  Don
- *  Al
- *  Sue
- *
- */
-
-int sum_string(char string[], int string_length);
-node_t * add_node_table(header_t hash_table[], data_t *data, int table_size);
+int hash_string(char *string, int string_length);
+node_t *add_node_table(header_t hash_table[], data_t *data, int table_size);
 int delete_node_table(header_t hash_table[], data_t *data);
 int print_table_list(header_t *head[], int table_size);
-node_t * search_table(header_t head[], data_t *data);
+node_t *search_table(header_t head[], data_t *data);
 
 int main(void) {
 
@@ -120,7 +66,7 @@ int main(void) {
                 printf("What is the persons age?\n> ");
                 scanf(" %d", &new_data->age);
 
-                order = sum_string(new_data->name, strlen(new_data->name)) % table_size;
+                order = hash_string(new_data->name, strlen(new_data->name)) % table_size;
 
                 add_node_table(hash_table[order], new_data, table_size);
                 break;
@@ -130,7 +76,7 @@ int main(void) {
                 printf("How old are they? (#)\n> ");
                 scanf(" %d", &new_data->age);
 
-                order = sum_string(new_data->name, strlen(new_data->name)) % table_size;
+                order = hash_string(new_data->name, strlen(new_data->name)) % table_size;
 
                 deleted = delete_node_table(hash_table[order], new_data);
 
@@ -151,7 +97,7 @@ int main(void) {
                 printf("What is their age? (#)\n> ");
                 scanf(" %d", &new_data->age);
 
-                order = sum_string(new_data->name, strlen(new_data->name)) % table_size;
+                order = hash_string(new_data->name, strlen(new_data->name)) % table_size;
 
                 searched = search_table(hash_table[order], new_data);
 
@@ -162,6 +108,8 @@ int main(void) {
 
                 printf("Found %s, age %d!\n", ((searched->data)->name), (searched->data)->age);
                 break;
+            default:
+                break;
 
         }
 
@@ -171,7 +119,7 @@ int main(void) {
     return 0;
 }
 
-int sum_string(char string[], int string_length) {
+int hash_string(char *string, int string_length) {
 
 
     // Add each number to sum
@@ -184,10 +132,10 @@ int sum_string(char string[], int string_length) {
     return sum;
 }
 
-node_t * add_node_table(header_t hash_table[], data_t *data, int table_size) {
+node_t *add_node_table(header_t hash_table[], data_t *data, int table_size) {
 
     // Find the order
-    int new_sum = sum_string(data->name, strlen(data->name));
+    int new_sum = hash_string(data->name, strlen(data->name));
     int order = new_sum % table_size;
 
     // Return the new node
@@ -225,10 +173,10 @@ int print_table_list(header_t *head[], int table_size) {
     return 0;
 }
 
-node_t * search_table(header_t head[], data_t *data) {
+node_t *search_table(header_t head[], data_t *data) {
 
     // Call search_list with each header and the order number
-    node_t * found_ptr = search_list(*head, data);
+    node_t *found_ptr = search_list(*head, data);
 
     // If found isn't NULL
     if (found_ptr != NULL) {
