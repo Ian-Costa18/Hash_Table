@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Create node and header types
+
+typedef struct data_t {
+    char name[32];
+    int age;
+} data_t;
+
 typedef struct node_t {
-    void *data;
+    data_t *data;
     int order;
     int position;
     struct node_t *next_node_ptr;
@@ -15,7 +22,7 @@ typedef struct header_t {
 } header_t;
 
 // Define functions
-node_t * add_node(header_t *head, void *data, int order) {
+node_t * add_node(header_t *head, data_t *data, int order) {
     // Add's a node to the linked list in ascending order
     //
 
@@ -108,8 +115,8 @@ node_t * add_node(header_t *head, void *data, int order) {
     return new_node_ptr;
 }
 
-int delete_node(header_t *head, int data) {
-    // Delete a node based on its data
+int delete_node(header_t *head, data_t *data) {
+    // Delete a node based on its order data
     // Returns -2 if list is empty, -1 if data isn't found, or,
     // if a node was deleted, the place in the list the node was deleted from
 
@@ -124,9 +131,8 @@ int delete_node(header_t *head, int data) {
         return -2;
     }
 
-
     // Check if the first node is going to be deleted
-    if (data == current_node_ptr->order) {
+    if (strcmp(data->name, (current_node_ptr->data)->name) >= 0 && data->age == (current_node_ptr->data)->age) {
 
         // Assign the previous node to first node
         previous_node_ptr = head->first_node_ptr;
@@ -152,7 +158,7 @@ int delete_node(header_t *head, int data) {
     for (int node_position = 0; current_node_ptr != NULL; node_position++) {
 
         // Check if current node should be deleted
-        if (data == current_node_ptr->order) {
+        if (strcmp(data->name, (current_node_ptr->data)->name) >= 0 && data->age == (current_node_ptr->data)->age) {
 
             // Change the last node to point to the next node
             previous_node_ptr->next_node_ptr = current_node_ptr->next_node_ptr;
@@ -170,10 +176,6 @@ int delete_node(header_t *head, int data) {
             // Stop the function - return position of node in list
             return node_position;
 
-        } else if (data < current_node_ptr->order) {
-            // List is ordered, if data is less than the current node's data
-            // the data must not have been found
-            break;
         }
 
         // Check if this is last node
@@ -188,12 +190,11 @@ int delete_node(header_t *head, int data) {
         current_node_ptr = current_node_ptr->next_node_ptr;
     }
 
-
     // Stop the function - return node not found
     return -1;
 }
 
-node_t * search_list(header_t head, int data) {
+node_t * search_list(header_t head, data_t *data) {
     // Searches the list for a node based on its order
     // Returns pointer to the node, or NULL if node wasn't found
 
@@ -204,7 +205,7 @@ node_t * search_list(header_t head, int data) {
     for (int counter = 0; node_ptr != NULL; counter++) {
 
         // Check if node's data equals the data we're searching for
-        if (node_ptr->order == data) {
+        if (data->age == (node_ptr->data)->age) {
 
             // Stop the function - return the found node
             return node_ptr;
