@@ -1,0 +1,37 @@
+Start the program
+Create variables for table size
+While (user doesn't want to exit the program)
+Get user input
+Check the table size and make sure its valid
+Create the hash table
+Fill table with default values
+Start the menu
+End the program when the user tries to exit
+
+Define the hashing function:
+Add each letter in the string to a sum variable
+Stop the function and return the sum of the characters
+
+Define the add node to the hash table function:
+Get the hash of the name
+Get the order for the hash
+Return the new node from linked list
+
+Define the delete node from hash table function:
+Call delete node from list from linked list
+If the function deleted a node, return the node
+Return -1 if the node wasn't found
+
+Start the print hash table list function:
+Start a counter up to the size of the table
+Create a new node as the current node
+While current node_ptr isnt NULL
+Print the values
+Set current node to next node
+Return success
+
+Start the search hash table function:
+Create a pointer to the output of search list function
+Check if that pointer is NULL
+If not, return it
+If it is return NULL

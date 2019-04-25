@@ -159,6 +159,7 @@ int delete_node_table(header_t *table, data_t *data) {
 
 int print_table_list(header_t *head[], int table_size) {
 
+
     for (int counter1 = 0; counter1 < table_size; counter1++) {
         node_t *current_node_ptr = head[counter1]->first_node_ptr;
         printf("Table #%d:\n", counter1);
